@@ -19,7 +19,10 @@ if __name__ == "__main__":
     )
     st.title("Chat with Excel / CSV Data")
 
-    st.header("Set your API Key")
+    st.header(
+        "Set your API Key",
+        help="You can get it from [OpenAI](https://platform.openai.com/account/api-keys/), or buy it conveniently from [here](https://api.nextweb.fun/).",
+    )
     # Get API base from input or environment variable
     api_base_input = st.text_input(
         "Enter API Base (Leave empty to use environment variable)",
@@ -31,6 +34,17 @@ if __name__ == "__main__":
         "Enter API Key (Leave empty to use environment variable)",
         type="password",
         value=os.environ.get("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"],
+    )
+    # Add css to hide item with title "Show password text"
+    st.markdown(
+        """
+    <style>
+        [title="Show password text"] {
+            display: none;
+        }
+    </style>
+    """,
+        unsafe_allow_html=True,
     )
 
     # Set OpenAI API key
