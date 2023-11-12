@@ -19,93 +19,102 @@ if __name__ == "__main__":
     )
     st.title("Chat with Excel / CSV Data")
 
-    st.header(
-        "Set your API Key",
-        help="You can get it from [OpenAI](https://platform.openai.com/account/api-keys/), or buy it conveniently from [here](https://api.nextweb.fun/).",
-    )
-    # Get API base from input or environment variable
-    api_base_input = st.text_input(
-        "Enter API Base (Leave empty to use environment variable)",
-        value=os.environ.get("OPENAI_API_BASE") or st.secrets["OPENAI_API_BASE"],
-    )
+    # Sidebar for API Key settings
+    with st.sidebar:
+        st.header(
+            "Set your API Key",
+            help="You can get it from [OpenAI](https://platform.openai.com/account/api-keys/), or buy it conveniently from [here](https://api.nextweb.fun/).",
+        )
+        # Get API base from input or environment variable
+        api_base_input = st.text_input(
+            "Enter API Base (Leave empty to use environment variable)",
+            value=os.environ.get("OPENAI_API_BASE") or st.secrets["OPENAI_API_BASE"],
+        )
 
-    # Get API key from input or environment variable
-    api_key_input = st.text_input(
-        "Enter API Key (Leave empty to use environment variable)",
-        type="password",
-        value=os.environ.get("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"],
-    )
-    # Add css to hide item with title "Show password text"
-    st.markdown(
-        """
-    <style>
-        [title="Show password text"] {
-            display: none;
-        }
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
+        # Get API key from input or environment variable
+        api_key_input = st.text_input(
+            "Enter API Key (Leave empty to use environment variable)",
+            type="password",
+            value=os.environ.get("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"],
+        )
+        # Add css to hide item with title "Show password text"
+        st.markdown(
+            """
+        <style>
+            [title="Show password text"] {
+                display: none;
+            }
+        </style>
+        """,
+            unsafe_allow_html=True,
+        )
 
-    # Set OpenAI API key
-    openai_api_base = (
-        api_base_input if api_base_input else os.environ.get("OPENAI_API_BASE")
-    )
-    openai_api_key = (
-        api_key_input if api_key_input else os.environ.get("OPENAI_API_KEY")
-    )
+        # Set OpenAI API key
+        openai_api_base = (
+            api_base_input if api_base_input else os.environ.get("OPENAI_API_BASE")
+        )
+        openai_api_key = (
+            api_key_input if api_key_input else os.environ.get("OPENAI_API_KEY")
+        )
 
-    # Create llm instance
-    llm = OpenAI(api_token=openai_api_key)
-    llm.api_base = openai_api_base
+        # Create llm instance
+        llm = OpenAI(api_token=openai_api_key)
+        llm.api_base = openai_api_base
 
-    # Allow user to upload multiple files
-    input_files = st.file_uploader(
-        "Upload files", type=["xlsx", "csv"], accept_multiple_files=True
-    )
+    # Main content area
+    with st.container():
+        # Allow user to upload multiple files
+        input_files = st.file_uploader(
+            "Upload files", type=["xlsx", "csv"], accept_multiple_files=True
+        )
 
-    # If user uploaded files, load them
-    if len(input_files) > 0:
-        data_list = []
-        for input_file in input_files:
-            if input_file.name.lower().endswith(".csv"):
-                data = pd.read_csv(input_file)
-            else:
-                data = pd.read_excel(input_file)
+        # If user uploaded files, load them
+        if len(input_files) > 0:
+            data_list = []
+            for input_file in input_files:
+                if input_file.name.lower().endswith(".csv"):
+                    data = pd.read_csv(input_file)
+                else:
+                    data = pd.read_excel(input_file)
+                st.dataframe(data, use_container_width=True)
+                data_list.append(data)
+        # Otherwise, load the default file
+        else:
+            st.header("Example Data")
+            data = pd.read_excel("./Sample.xlsx")
             st.dataframe(data, use_container_width=True)
-            data_list.append(data)
-    # Otherwise, load the default file
-    else:
-        st.header("Example Data")
-        data = pd.read_excel("./Sample.xlsx")
-        st.dataframe(data, use_container_width=True)
-        data_list = [data]
+            data_list = [data]
 
-    # Create SmartDatalake instance
-    df = SmartDatalake(
-        dfs=data_list,
-        config={
-            "llm": llm,
-            "verbose": True,
-            "response_parser": StreamlitResponse,
-            "middlewares": [StreamlitMiddleware()],
-        },
-    )
+        # Create SmartDatalake instance
+        df = SmartDatalake(
+            dfs=data_list,
+            config={
+                "llm": llm,
+                "verbose": True,
+                "response_parser": StreamlitResponse,
+                "middlewares": [StreamlitMiddleware()],
+            },
+        )
 
-    # Input text
-    st.header("Ask anything!")
-    input_text = st.text_area(
-        "Enter your question", value="What is the total profit for each country?"
-    )
+        # Input text
+        st.header("Ask anything!")
+        input_text = st.text_area(
+            "Enter your question", value="What is the total profit for each country?"
+        )
 
-    if input_text is not None:
-        if st.button("Start Execution"):
-            result = df.chat(input_text)
+        if input_text is not None:
+            if st.button("Start Execution"):
+                result = df.chat(input_text)
 
-            # Display the result
-            st.header("Answer")
-            st.write(result)
+                # Display the result and code in two columns
+                col1, col2 = st.columns(2)
 
-            # Display the corresponding code
-            st.header("The corresponding code")
-            st.code(df.last_code_executed, language="python", line_numbers=False)
+                with col1:
+                    # Display the result
+                    st.header("Answer")
+                    st.write(result)
+
+                with col2:
+                    # Display the corresponding code
+                    st.header("The corresponding code")
+                    st.code(df.last_code_executed, language="python", line_numbers=True)
