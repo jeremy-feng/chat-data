@@ -14,7 +14,7 @@ load_dotenv()
 if __name__ == "__main__":
     st.set_page_config(
         layout="wide",
-        page_icon="./logo.svg",
+        page_icon="./image/logo.svg",
         page_title="Chat with Excel / CSV Data",
     )
     st.title("Chat with Excel / CSV Data")
