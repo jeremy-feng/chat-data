@@ -23,14 +23,14 @@ if __name__ == "__main__":
     # Get API base from input or environment variable
     api_base_input = st.text_input(
         "Enter API Base (Leave empty to use environment variable)",
-        value=os.environ.get("OPENAI_API_BASE"),
+        value=os.environ.get("OPENAI_API_BASE") or st.secrets["OPENAI_API_BASE"],
     )
 
     # Get API key from input or environment variable
     api_key_input = st.text_input(
         "Enter API Key (Leave empty to use environment variable)",
         type="password",
-        value=os.environ.get("OPENAI_API_KEY"),
+        value=os.environ.get("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"],
     )
 
     # Set OpenAI API key
