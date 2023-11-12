@@ -1,6 +1,18 @@
 # Chat with Excel / CSV Data
 
+<p align="center">
+  <a href="https://chat-data.streamlit.app/"><img
+    src="https://img.shields.io/badge/Streamlit-App-brightgreen.svg"
+    alt="Build"
+  /></a>
+</p>
+
 This is a Streamlit application that allows users to upload Excel or CSV files, analyze the data, and execute code to display results.
+
+
+Analyze data             | Plot data 
+:-------------------------:|:-------------------------:
+![Analyze data](image/cover-1.png)  |  ![Plot data](image/cover-2.png)
 
 ## Features
 
