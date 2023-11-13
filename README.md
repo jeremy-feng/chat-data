@@ -9,10 +9,13 @@
 
 This is a Streamlit application that allows users to upload Excel or CSV files, analyze the data, and execute code to display results.
 
+# Demo
+
+[https://chat-data.streamlit.app](https://chat-data.streamlit.app/)
 
 Analyze data             | Plot data 
 :-------------------------:|:-------------------------:
-![Analyze data](image/cover-1.png)  |  ![Plot data](image/cover-2.png)
+[![Analyze data](image/cover-1.png)](https://chat-data.streamlit.app/)  |  [![Plot data](image/cover-2.png)](https://chat-data.streamlit.app/)
 
 ## Features
 
