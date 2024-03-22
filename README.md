@@ -41,7 +41,7 @@ Analyze data             | Plot data
    ```
    git clone https://github.com/jeremy-feng/chat-data.git
    ```
-2. Install the required packages:ss
+2. Install the required packages:
 
    ```
    pip install -r requirements.txt
